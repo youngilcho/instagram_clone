@@ -3,6 +3,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from utils import FilePathManager
+
 
 class InstagramUser(models.Model):
     """
@@ -10,6 +12,8 @@ class InstagramUser(models.Model):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField()
+
+    profile_image = models.ImageField(upload_to=FilePathManager('account/instagram_user/profile/image/'))
 
 
 class UserRelationship(models.Model):

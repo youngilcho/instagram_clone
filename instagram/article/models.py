@@ -6,35 +6,37 @@ from django.utils.deconstruct import deconstructible
 
 from account.models import InstagramUser
 
-@deconstructible
-class FilePathManager(object):
-    def __init__(self, sub_path):
-        self.path = sub_path
-
-    def _gen_filename_hash(self):
-        import uuid
-        return str(uuid.uuid4())
-
-    def __call__(self, instance, filename):
-        import time
-        import datetime
-        import os
-        name, extend = os.path.splitext(filename)
-        name = self._gen_filename_hash()
-        filename = "%s%s" % (name, extend)
-        return self.path + str(datetime.datetime.now().strftime("%Y%m%d")) + "/" + filename
+from utils import FilePathManager
 
 
 class Article(models.Model):
+    """
+        게시글 정보를 저장하는 모델
+    """
     user = models.ForeignKey(InstagramUser)
-    photo = models.ImageField(pload_to=FilePathManager('article/'))
+    photo = models.ImageField(pload_to=FilePathManager('article/article/photo/'))
     text = models.CharField(max_length=100, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
+class Comment(models.Model):
+    """
+        댓글 정보를 저장하는 모델
+    """
+    article = models.ForeignKey(Article)
+    user = models.ForeignKey(InstagramUser)
+    comment = models.CharField(max_length=100)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class Like(models.Model):
+    """
+        Like 정보를 저장하는 모델
+    """
     article = models.ForeignKey(Article)
     user = models.ForeignKey(InstagramUser)
 
